@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<title>Login page</title>
+<title>Login and Registration Page</title>
 </head>
 <body>
 	<h1>Welcome to the Telco Application</h1>
@@ -12,6 +12,19 @@
 		Password: <input type="password" name="pwd" required><br>
 		<input type="submit" value="login">
 		<p th:text=" ${errorMsg}"></p>
+	</form>
+
+	<!-- <a href="/WEB-INF/HomePage.html" action="GoToHomePage" method="POST">Continue without logging in</a> -->
+	<form action="GoToHomePage" method="POST">
+		<input type="submit" value="Continue without logging in">
+	</form>
+	
+	<form action="Registration" method="POST">
+		Username: <input type="text" name="username" required> <br>
+		Email: <input type="text" name="email" required><br>
+		Password: <input type="password" name="pwd" required><br>
+		<input type="submit" value="register">
+		<p th:text=" ${registrationMsg}"></p>
 	</form>
 
 </body>

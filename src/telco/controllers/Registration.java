@@ -3,35 +3,32 @@ package telco.controllers;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.persistence.NonUniqueResultException;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.lang.StringEscapeUtils;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import telco.services.UserService;
-import telco.services.QueryService;
-import telco.entities.User;
 import telco.exceptions.CredentialsException;
-import javax.persistence.NonUniqueResultException;
+import telco.services.UserService;
 
-import javax.naming.*;
-
-@WebServlet("/CheckLogin")
-public class CheckLogin extends HttpServlet {
+@WebServlet("/Registration")
+public class Registration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
+
 	@EJB(name = "telco.services/UserService")
 	private UserService usrService;
 
-	public CheckLogin() {
+	public Registration() {
 		super();
 	}
 
@@ -46,63 +43,45 @@ public class CheckLogin extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// obtain and escape params
 		String usrn = null;
+		String email = null;
 		String pwd = null;
 		try {
 			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
+			email = StringEscapeUtils.escapeJava(request.getParameter("email"));
 			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
-			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
+			if (usrn == null || email == null || pwd == null || usrn.isEmpty() || email.isEmpty() || pwd.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			}
-
 		} catch (Exception e) {
 			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
 			return;
 		}
-		User user;
+		String error;
 		try {
-			// query db to authenticate for user
-			user = usrService.checkCredentials(usrn, pwd);
+			// query db to register the user
+			error = usrService.registration(usrn, email, pwd);
 		} catch (CredentialsException | NonUniqueResultException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not check credentials");
 			return;
 		}
-
-		// If the user exists, add info to the session and go to home page, otherwise
-		// show login page with error message
-
-		String path;
-		if (user == null) {
+		if (error.equals("OK")) {
+			String path;
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", "Incorrect username or password");
+			ctx.setVariable("registrationMsg", "Registration successful");
 			path = "/index.html";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
-			QueryService qService = null;
-			try {
-				/*
-				 * We need one distinct EJB for each user. Get the Initial Context for the JNDI
-				 * lookup for a local EJB. Note that the path may be different in different EJB
-				 * environments. In IntelliJ use: ic.lookup(
-				 * "java:/openejb/local/ArtifactFileNameWeb/ArtifactNameWeb/QueryServiceLocalBean"
-				 * );
-				 */
-				InitialContext ic = new InitialContext();
-				// Retrieve the EJB using JNDI lookup
-				qService = (QueryService) ic.lookup("java:/openejb/local/QueryServiceLocalBean");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			request.getSession().setAttribute("user", user);
-			request.getSession().setAttribute("queryService", qService);
-			path = getServletContext().getContextPath() + "/GoToHomePage";
-			response.sendRedirect(path);
+			String path;
+			ServletContext servletContext = getServletContext();
+			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+			ctx.setVariable("registrationMsg", error);
+			path = "/index.html";
+			templateEngine.process(path, ctx, response.getWriter());
 		}
-
 	}
 
 	public void destroy() {

@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Customer Telco Home</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../CSS/style.css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+	<h1>Welcome to the Telco Home Page</h1>
+
+	<div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+
+	<div th:if="${session.user != null}" align="right">
+		<p th:text="${session.user.username}"></p>
+	</div>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Validity Period</th>
+				<th>Monthly Fee</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="p : ${packages}">
+				<td th:text="${p.name}"></td>
+				<td th:text="${p.valPeriod}"></td>
+				<td th:text="${p.monthlyFee}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+</body>
+</html>
