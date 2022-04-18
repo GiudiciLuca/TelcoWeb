@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.thymeleaf.TemplateEngine;
 
-//import telco.services.PackageService;
-import telco.entities.*;
+import telco.entities.Order;
 import telco.entities.Package;
+import telco.entities.User;
+import telco.services.OrderService;
 import telco.services.PackageService;
 import java.util.List;
 import org.thymeleaf.context.WebContext;
@@ -31,9 +32,9 @@ public class GoToHomePage extends HttpServlet {
 
 	@EJB(name = "telco.services/PackageService")
 	private PackageService packageService;
-	/*
-	 * @EJB(name = "telco.services/OrderService") private OrderService orderService;
-	 */
+
+	@EJB(name = "telco.services/OrderService")
+	private OrderService orderService;
 
 	public GoToHomePage() {
 		super();
@@ -71,17 +72,26 @@ public class GoToHomePage extends HttpServlet {
 		if (chosen == null | chosenPackage == null)
 			chosenPackage = packageService.findDefault();
 
-		/*
-		 * List<Order> orders = null; orders =
-		 * orderService.findInsolventOrdersByUserId(userId);
-		 */
-
-		String path = "/WEB-INF/HomePage.html";
+		//NEW to check = easy implementation but we do a lot of stuff useless if the user is an employee
+		User user = (User) request.getSession().getAttribute("user");
+		String path;
+		if(user.getEmployee())
+			path = "/WEB-INF/EmployeeHomePage.html";
+		else
+			path = "/WEB-INF/HomePage.html";
+		
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("packages", packages);
 		if (chosenPackage != null)
 			ctx.setVariable("chosenpackage", chosenPackage);
+
+		//NEW to check
+		List<Order> rejectedOrders = null;
+		rejectedOrders = orderService.findRejectedOrdersByUserId(user.getId());
+		if(rejectedOrders != null)
+			ctx.setVariable("rejectedOrders", rejectedOrders);
+
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

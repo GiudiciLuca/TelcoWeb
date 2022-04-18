@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Customer Telco Confirmation</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../CSS/style.css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+	<h1>Welcome to the Telco Confirmation Page</h1>
+
+	<div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+
+	<!-- TODO: idea = have a page for LogIn and Registration (NOT USE INDEX) linked only at Confirmation Page to do things easily -->
+	<div th:if="${session.user == null}">
+		<p>Before continue you need to login or register</p>
+		<a th:href="@{/GoToLogIn}">Login or Register</a>
+	</div>
+	
+	<div th:if="${session.user != null}" align="right">
+		<p th:text="${session.user.username}"></p>
+	</div>
+	
+	<!--// TODO: method to call the fail or correct payment -->
+	<div th:if="${session.user != null}">
+		<form action="#" th:action="@{/}" method="GET">
+			<input type="submit" value="correct payment">
+		</form>
+		<form action="#" th:action="@{/}" method="GET">
+			<input type="submit" value="failed payment">
+		</form>
+	</div>
+
+</body>
+</html>

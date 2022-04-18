@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Employee Telco Home</title>
+<link rel="stylesheet" type="text/css" media="all"
+	href="../CSS/style.css" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+	<h1>Welcome to the Telco Employee Home Page</h1>
+
+	<div align="right">
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+
+	<div>
+		<a th:href="@{/GoToSalesReportPage}">Go to Sales Report Page</a>
+	</div>
+
+</body>
+</html>
