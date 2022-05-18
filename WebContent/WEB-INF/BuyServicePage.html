@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<h1>Welcome to the Telco Buy Service Page</h1>
+	<h1>Telco Buy Service Page</h1>
 
 	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
@@ -18,29 +18,36 @@
 		<p th:text="${session.user.username}"></p>
 	</div>
 
+	<p th:text="'Select remaining information for package: ' + ${package.name}"></p>
+	<br>
 	<form action="#" th:action="@{/GoToConfirmationPage}" method="GET">
-		<label for="valperiod">Choose a validity period:</label> 
-		<select	name="valperiod" id="valperiod">
+		<label for="valperiod">Choose a validity period:</label> <select
+			name="valperiod" id="valperiod">
 			<option value="12">12 months</option>
 			<option value="24">24 months</option>
 			<option value="36">36 months</option>
 		</select> 
 		<br> <br>
-		<label>Choose 0 or more optional products:</label>
-		<table>
-			<tbody>
-				<tr th:each="p: ${products}">
-					<td th:text="${p.name}"></td>
-					<td th:text="${p.monthlyFee}"></td>
-					<td><input th:value="${p.name}" type="checkbox"></td>
-				</tr>
-			</tbody>
-		</table>
+		<div th:if="${products != null}">
+			<div th:if="${!products.empty}">
+				<label>Choose 0 or more optional products:</label>
+				<table>
+					<tbody>
+						<tr th:each="p: ${products}">
+							<td th:text="${p.name}"></td>
+							<td th:text="${p.monthlyFee}"></td>
+							<td><input th:value="${p.name}" name="optionalproduct" type="checkbox"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 		<br> <br>
-		<label for="start">Start date:</label> 
-		<input type="date" id="startdate" name="startdate" 
-			value="2022-05-31" min="2022-05-31" max="2022-12-31">
-		<br> <br> 
+		<label for="start">Start date:</label> <input type="date"
+			id="startdate" name="startdate" value="2022-05-31" min="2022-05-31"
+			max="2022-12-31"> 
+		<br> <br>
+		<input type="hidden" name="package" th:value="${package.id}">
 		<input type="submit" value="Confirm">
 	</form>
 

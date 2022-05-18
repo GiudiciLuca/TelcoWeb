@@ -1,8 +1,6 @@
 package telco.controllers;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -18,22 +16,22 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import telco.entities.Package;
 import telco.entities.Product;
-import telco.services.PackageService;
+import telco.entities.Service;
 import telco.services.ProductService;
+import telco.services.ServiceService;
 
-@WebServlet("/GoToConfirmationPage")
-public class GoToConfirmationPage extends HttpServlet {
+@WebServlet("/GoToEmployeeHomePage")
+public class GoToEmployeeHomePage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	
-	@EJB(name = "telco.services/PackageService")
-	private PackageService packageService;
 	@EJB(name = "telco.services/ProductService")
-	private ProductService productService;
-
-	public GoToConfirmationPage() {
+	private ProductService pService;
+	@EJB(name = "telco.services/ServiceService")
+	private ServiceService sService;
+	
+	public GoToEmployeeHomePage() {
 		super();
 	}
 
@@ -45,41 +43,21 @@ public class GoToConfirmationPage extends HttpServlet {
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
 	}
-	
-	//TODO: to check
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		Integer valPeriod = Integer.parseInt(request.getParameter("valperiod"));
-		Date startDate = Date.valueOf(request.getParameter("startdate"));
-		Integer packageId = Integer.parseInt(request.getParameter("package"));
-		String[] optionalProductsParam = request.getParameterValues("optionalproduct");
+		List<Product> products = null;
+		products = pService.findAllProducts();
 		
-		Package pack = packageService.findById(packageId);
+		List<Service> services = null;
+		services = sService.findAllServices();
 		
-		List<Product> optionalProducts = new ArrayList<Product>();
-		for(String s : optionalProductsParam) {
-			optionalProducts.add(productService.findByName(s));
-		}
-		
-		String path = "/WEB-INF/ConfirmationPage.html";
+		String path = "/WEB-INF/EmployeeHomePage.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		
-		ctx.setVariable("valperiod", valPeriod);
-		ctx.setVariable("startdate", startDate);
-		ctx.setVariable("package", pack);
-		ctx.setVariable("optionalproducts", optionalProducts);
-		
-		//TODO: check with the requirements if it is the correct value of total price
-		Integer totalPrice = pack.getMonthlyFee()*valPeriod;
-		if(!optionalProducts.isEmpty()) {
-			for(Product o : optionalProducts) {
-				totalPrice = totalPrice + o.getMonthlyFee()*valPeriod;
-			}
-		}
-		ctx.setVariable("totalprice", totalPrice);
-		
+		ctx.setVariable("products", products);
+		ctx.setVariable("services", services);
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 

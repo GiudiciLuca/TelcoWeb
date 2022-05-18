@@ -67,20 +67,53 @@ public class Registration extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not check credentials");
 			return;
 		}
+
+		// TODO: to check
+		String path;
+		if (request.getSession().getAttribute("fromConfirmationPage") == null)
+			request.getSession().setAttribute("fromConfirmationPage", false);
+
+		boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+
+		//
+
 		if (error.equals("OK")) {
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("registrationMsg", "Registration successful");
-			path = "/index.html";
-			templateEngine.process(path, ctx, response.getWriter());
+			// PREVIOUS:
+			/*
+			 * String path; ServletContext servletContext = getServletContext(); final
+			 * WebContext ctx = new WebContext(request, response, servletContext,
+			 * request.getLocale()); ctx.setVariable("registrationMsg",
+			 * "Registration successful"); path = "/index.html";
+			 * templateEngine.process(path, ctx, response.getWriter());
+			 */
+			if (fromConfirmationPage) {
+				path = getServletContext().getContextPath() + "/GoToLogin";
+				request.getSession().setAttribute("registration", "Registration successful");
+				response.sendRedirect(path);
+			} else {
+				ctx.setVariable("registrationMsg", "Registration successful");
+				path = "/index.html";
+				templateEngine.process(path, ctx, response.getWriter());
+			}
 		} else {
-			String path;
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("registrationMsg", error);
-			path = "/index.html";
-			templateEngine.process(path, ctx, response.getWriter());
+			// PREVIOUS:
+			/*
+			 * String path; ServletContext servletContext = getServletContext(); final
+			 * WebContext ctx = new WebContext(request, response, servletContext,
+			 * request.getLocale()); ctx.setVariable("registrationMsg", error); path =
+			 * "/index.html"; templateEngine.process(path, ctx, response.getWriter());
+			 */
+			if (fromConfirmationPage) {
+				path = getServletContext().getContextPath() + "/GoToLogin";
+				request.getSession().setAttribute("registration", error);
+				response.sendRedirect(path);
+			} else {
+				ctx.setVariable("registrationMsg", error);
+				path = "/index.html";
+				templateEngine.process(path, ctx, response.getWriter());
+			}
 		}
 	}
 

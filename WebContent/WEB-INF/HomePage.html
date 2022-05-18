@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<h1>Welcome to the Telco Home Page</h1>
+	<h1>Telco Home Page</h1>
 
 	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
@@ -18,6 +18,8 @@
 		<p th:text="${session.user.username}"></p>
 	</div>
 
+	<h2>Service Packages</h2>
+	<h3>Click on the name of the package to buy it!</h3>
 	<table>
 		<thead>
 			<tr>
@@ -28,26 +30,36 @@
 		</thead>
 		<tbody>
 			<tr th:each="p : ${packages}">
-				<td th:text="${p.name}"></td>
+				<td><a th:href="@{/GoToBuyServicePage(packageId=${p.id})}" th:text="${p.name}"></a></td>
 				<td th:text="${p.valPeriod}"></td>
 				<td th:text="${p.monthlyFee}"></td>
 			</tr>
 		</tbody>
 	</table>
 	
-	<table>
-		<tbody>
-			<tr th:each="o : ${rejectedOrders}">
-				<td th:text="${o.dateTime}"></td>
-				<td th:text="${o.totalValue}"></td>
-				<td th:text="${o.startDate}"></td>
-			</tr>
-		</tbody>
-	</table>
-
-	<div>
-		<a th:href="@{/GoToBuyServicePage}">Go to Buy Service Page</a>
+	<br> <br>
+	
+	<div th:if="${rejectedOrders != null}">
+		<div th:if="${!rejectedOrders.empty}">
+			<h2>Rejected Orders</h2>
+			<table>
+				<thead>
+					<tr>
+						<td>Date and Time</td>
+						<td>Total Value</td>
+						<td>Start Date</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="o : ${rejectedOrders}">
+						<td th:text="${o.dateTime}"></td>
+						<td th:text="${o.totalValue}"></td>
+						<td th:text="${o.startDate}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-
+	
 </body>
 </html>

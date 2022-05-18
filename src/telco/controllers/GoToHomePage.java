@@ -38,7 +38,6 @@ public class GoToHomePage extends HttpServlet {
 
 	public GoToHomePage() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public void init() throws ServletException {
@@ -56,6 +55,10 @@ public class GoToHomePage extends HttpServlet {
 		List<Package> packages = null;
 		packages = packageService.findAllPackages();
 
+		//TODO: delete this part because it is USELESS for us
+		//we don't update this page with a selected package
+		//we go to "Buy Service Page" once select a package
+		/*
 		Package chosenPackage = null;
 		Integer chosen = null;
 		if (request.getParameterMap().containsKey("packageId") && request.getParameter("packageId") != ""
@@ -71,26 +74,24 @@ public class GoToHomePage extends HttpServlet {
 			chosenPackage = packageService.findById(chosen);
 		if (chosen == null | chosenPackage == null)
 			chosenPackage = packageService.findDefault();
+		*/
+		String path = "/WEB-INF/HomePage.html";
 
-		//NEW to check = easy implementation but we do a lot of stuff useless if the user is an employee
-		User user = (User) request.getSession().getAttribute("user");
-		String path;
-		if(user.getEmployee())
-			path = "/WEB-INF/EmployeeHomePage.html";
-		else
-			path = "/WEB-INF/HomePage.html";
-		
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("packages", packages);
+		/*
 		if (chosenPackage != null)
 			ctx.setVariable("chosenpackage", chosenPackage);
+		*/
 
-		//NEW to check
-		List<Order> rejectedOrders = null;
-		rejectedOrders = orderService.findRejectedOrdersByUserId(user.getId());
-		if(rejectedOrders != null)
+		// There is the need to check if the user is null since an user can enter the application without logging in
+		User user = (User) request.getSession().getAttribute("user");
+		if (user != null) {
+			List<Order> rejectedOrders = null;
+			rejectedOrders = orderService.findRejectedOrdersByUserId(user.getId());
 			ctx.setVariable("rejectedOrders", rejectedOrders);
+		}
 
 		templateEngine.process(path, ctx, response.getWriter());
 	}

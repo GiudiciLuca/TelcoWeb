@@ -8,29 +8,47 @@
 </head>
 <body>
 
-	<h1>Welcome to the Telco Confirmation Page</h1>
+	<h1>Telco Confirmation Page</h1>
 
 	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
 
-	<!-- TODO: idea = have a page for LogIn and Registration (NOT USE INDEX) linked only at Confirmation Page to do things easily -->
 	<div th:if="${session.user == null}">
 		<p>Before continue you need to login or register</p>
-		<a th:href="@{/GoToLogIn}">Login or Register</a>
+		<a th:href="@{/GoToLogin}">Login or Register</a>
 	</div>
-	
+
 	<div th:if="${session.user != null}" align="right">
 		<p th:text="${session.user.username}"></p>
 	</div>
 	
 	<!--// TODO: method to call the fail or correct payment -->
 	<div th:if="${session.user != null}">
-		<form action="#" th:action="@{/}" method="GET">
-			<input type="submit" value="correct payment">
-		</form>
-		<form action="#" th:action="@{/}" method="GET">
-			<input type="submit" value="failed payment">
+		<form action="#" th:action="@{/}" method="POST">
+			<h2>Order summary</h2>
+			<table>
+				<tbody>
+					<tr>
+						<td th:text="'Package: ' + ${package.name}"></td>
+					</tr>
+					<tr th:if="${!optionalproducts.empty}">
+						<td>Optional products: </td>
+						<td th:each="p : ${optionalproducts}" th:text="${p.name}"></td>
+					</tr>
+					<tr>
+						<td th:text="'Total price' + ${totalprice}"></td>
+					</tr>
+				</tbody>
+			</table>
+			<br>
+			<input type="hidden" name="packageid" th:value="${package.id}">
+			<input type="hidden" name="startdate" th:value="${startdate}">
+			<input type="hidden" name="valperiod" th:value="${valperiod}">
+			<input type="hidden" name="products" th:value="${optionalproducts}">
+			<input type="submit" name="typeofpayment" value="Correct payment"> 
+			<br> 			
+			<input type="submit" name="typeofpayment" value="Failed payment">
 		</form>
 	</div>
 

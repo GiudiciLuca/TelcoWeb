@@ -29,7 +29,7 @@ public class CheckLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	@EJB(name = "telco.services/UserService")
-	private UserService usrService;
+	private UserService userService;
 
 	public CheckLogin() {
 		super();
@@ -49,31 +49,30 @@ public class CheckLogin extends HttpServlet {
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
+
 		try {
 			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 			pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			}
-
 		} catch (Exception e) {
 			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
 			return;
 		}
+
 		User user;
 		try {
-			// query db to authenticate for user
-			user = usrService.checkCredentials(usrn, pwd);
+			user = userService.checkCredentials(usrn, pwd);
 		} catch (CredentialsException | NonUniqueResultException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not check credentials");
 			return;
 		}
 
-		// If the user exists, add info to the session and go to home page, otherwise
-		// show login page with error message
-
+		// TODO: check @Registration to implement something similar for when there is an
+		// error in the login process coming from the confirmation page
 		String path;
 		if (user == null) {
 			ServletContext servletContext = getServletContext();
@@ -99,10 +98,23 @@ public class CheckLogin extends HttpServlet {
 			}
 			request.getSession().setAttribute("user", user);
 			request.getSession().setAttribute("queryService", qService);
-			path = getServletContext().getContextPath() + "/GoToHomePage";
+
+			// TODO to improve
+			if (request.getSession().getAttribute("fromConfirmationPage") == null)
+				request.getSession().setAttribute("fromConfirmationPage", false);
+
+			boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
+
+			if (fromConfirmationPage) {
+				path = getServletContext().getContextPath() + "/GoToConfirmationPage";
+				request.getSession().setAttribute("fromConfirmationPage", false);
+			} else if (user.getEmployee())
+				path = getServletContext().getContextPath() + "/GoToEmployeeHomePage";
+			else
+				path = getServletContext().getContextPath() + "/GoToHomePage";
+
 			response.sendRedirect(path);
 		}
-
 	}
 
 	public void destroy() {

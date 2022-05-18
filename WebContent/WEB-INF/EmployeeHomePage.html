@@ -8,11 +8,65 @@
 </head>
 <body>
 
-	<h1>Welcome to the Telco Employee Home Page</h1>
+	<h1>Telco Employee Home Page</h1>
 
 	<div align="right">
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
+
+	<!-- Form for create packages -->
+	<h2>Create Service Package</h2>
+	<form th:action="@{/CreatePackage}" method="POST">
+		Name: <input type="text" name="packagename" required>
+		<br> 
+		<label for="valperiod">Select a validity period:</label>
+		<select name="valperiod" id="valperiod">
+			<option value="12">12 months</option> 
+			<option value="24">24 months</option>
+			<option value="36">36 months</option>
+		</select>  
+		<br> 
+		<label for="optionalproduct">Choose 1 or more services:</label> 
+		<br>
+		<table>
+			<tbody>
+				<tr th:each="s: ${services}">
+					<td th:text="${s.type}"></td>
+					<td><input name="service" th:value="${s.type}"
+						type="checkbox"></td>
+				</tr>
+			</tbody>
+		</table>
+		<br> 
+		<label for="optionalproduct">Choose 0 or more optional products:</label> 
+		<br>
+		<table>
+			<tbody>
+				<tr th:each="p: ${products}">
+					<td th:text="${p.name}"></td>
+					<td th:text="${p.monthlyFee}"></td>
+					<td><input name="optionalproduct" th:value="${p.name}"
+						type="checkbox"></td>
+				</tr>
+			</tbody>
+		</table>
+		<br> 
+		<input type="submit" value="Create package">
+	</form>
+
+	<br>
+	<br>
+
+	<!-- Form for create optional products -->
+	<h2>Create Optional Product</h2>
+	<form th:action="@{/CreateProduct}" method="POST">
+		Name: <input type="text" name="productname" required><br>
+		Monthly Fee: <input type="number" name="monthlyfee" required><br>
+		<input type="submit" value="Create product">
+	</form>
+
+	<br>
+	<br>
 
 	<div>
 		<a th:href="@{/GoToSalesReportPage}">Go to Sales Report Page</a>
