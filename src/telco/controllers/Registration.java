@@ -68,29 +68,21 @@ public class Registration extends HttpServlet {
 			return;
 		}
 
-		// TODO: to check
+		// used to know if Registration is called from the Confirmation page
 		String path;
 		if (request.getSession().getAttribute("fromConfirmationPage") == null)
 			request.getSession().setAttribute("fromConfirmationPage", false);
-
 		boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
+		
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 
-		//
-
+		//If error during registration
 		if (error.equals("OK")) {
-			// PREVIOUS:
-			/*
-			 * String path; ServletContext servletContext = getServletContext(); final
-			 * WebContext ctx = new WebContext(request, response, servletContext,
-			 * request.getLocale()); ctx.setVariable("registrationMsg",
-			 * "Registration successful"); path = "/index.html";
-			 * templateEngine.process(path, ctx, response.getWriter());
-			 */
+			//if coming from Confirmation Page (or from Login Registration Page) and user register incorrectly reload the Login Registration Page
 			if (fromConfirmationPage) {
 				path = getServletContext().getContextPath() + "/GoToLogin";
-				request.getSession().setAttribute("registration", "Registration successful");
+				request.getSession().setAttribute("regMsg", "Registration successful");
 				response.sendRedirect(path);
 			} else {
 				ctx.setVariable("registrationMsg", "Registration successful");
@@ -98,16 +90,9 @@ public class Registration extends HttpServlet {
 				templateEngine.process(path, ctx, response.getWriter());
 			}
 		} else {
-			// PREVIOUS:
-			/*
-			 * String path; ServletContext servletContext = getServletContext(); final
-			 * WebContext ctx = new WebContext(request, response, servletContext,
-			 * request.getLocale()); ctx.setVariable("registrationMsg", error); path =
-			 * "/index.html"; templateEngine.process(path, ctx, response.getWriter());
-			 */
 			if (fromConfirmationPage) {
 				path = getServletContext().getContextPath() + "/GoToLogin";
-				request.getSession().setAttribute("registration", error);
+				request.getSession().setAttribute("regMsg", error);
 				response.sendRedirect(path);
 			} else {
 				ctx.setVariable("registrationMsg", error);

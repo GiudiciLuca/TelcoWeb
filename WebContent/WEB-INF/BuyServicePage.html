@@ -23,9 +23,7 @@
 	<form action="#" th:action="@{/GoToConfirmationPage}" method="GET">
 		<label for="valperiod">Choose a validity period:</label> <select
 			name="valperiod" id="valperiod">
-			<option value="12">12 months</option>
-			<option value="24">24 months</option>
-			<option value="36">36 months</option>
+			<option th:each="v : ${valperiods}" th:value="${v.id}" th:text="${v.months} + ' months'"></option>
 		</select> 
 		<br> <br>
 		<div th:if="${products != null}">
@@ -36,7 +34,7 @@
 						<tr th:each="p: ${products}">
 							<td th:text="${p.name}"></td>
 							<td th:text="${p.monthlyFee}"></td>
-							<td><input th:value="${p.name}" name="optionalproduct" type="checkbox"></td>
+							<td><input th:value="${p.id}" name="optionalproduct" type="checkbox"></td>
 						</tr>
 					</tbody>
 				</table>
@@ -44,8 +42,7 @@
 		</div>
 		<br> <br>
 		<label for="start">Start date:</label> <input type="date"
-			id="startdate" name="startdate" value="2022-05-31" min="2022-05-31"
-			max="2022-12-31"> 
+			id="startdate" name="startdate" value="2022-05-30" min="2022-05-30"> 
 		<br> <br>
 		<input type="hidden" name="package" th:value="${package.id}">
 		<input type="submit" value="Confirm">

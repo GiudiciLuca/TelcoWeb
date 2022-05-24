@@ -26,17 +26,18 @@ public class CreatePackage extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String name = request.getParameter("packagename");
-		Integer valPeriod = Integer.parseInt(request.getParameter("valperiod"));
-		String services[] = request.getParameterValues("service");
-		String products[] = request.getParameterValues("optionalproduct");
+		String[] valPeriods = request.getParameterValues("valperiod");
+		String[] services = request.getParameterValues("service");
+		String[] products = request.getParameterValues("optionalproduct");
 		
-		if (name == null | name.isEmpty() | valPeriod == null | valPeriod == 0 | services == null
+		if (name == null | name.isEmpty() | valPeriods == null | valPeriods.length == 0 | services == null
 				| services.length == 0) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Package parameters");
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid package parameters");
 			return;
 		}
 
-		pService.createPackage(name, valPeriod, services, products);
+		String message = pService.createPackage(name, valPeriods, services, products);
+		request.getSession().setAttribute("packageMsg", message);
 		String path = getServletContext().getContextPath() + "/GoToEmployeeHomePage";
 		response.sendRedirect(path);
 	}

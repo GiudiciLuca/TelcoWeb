@@ -23,9 +23,11 @@ public class Logout extends HttpServlet {
 			throws ServletException, IOException {
 
 		HttpSession session = request.getSession(false);
+		
+		//TODO: check if Query Service is useful
 		if (session != null) {
-			QueryService qs = (QueryService) session.getAttribute("queryService");
-			if (qs != null) qs.remove();
+			// QueryService qs = (QueryService) session.getAttribute("queryService");
+			// if (qs != null) qs.remove();
 			session.invalidate();
 		}
 		String path = getServletContext().getContextPath() + "/index.html";

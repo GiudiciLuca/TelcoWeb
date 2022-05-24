@@ -38,13 +38,17 @@ public class GoToLogin extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 
-		// TODO: to check
-		if (request.getSession().getAttribute("registration") != null) {
-			String registration = (String) request.getSession().getAttribute("registration");
+		// Set messages for correct/incorrect Registration
+		if (request.getSession().getAttribute("regMsg") != null) {
+			String registration = (String) request.getSession().getAttribute("regMsg");
 			ctx.setVariable("registrationMsg", registration);
 		}
+		
+		if (request.getSession().getAttribute("loginMsg") != null) {
+			String loginMsg = (String) request.getSession().getAttribute("loginMsg");
+			ctx.setVariable("loginMsg", loginMsg);
+		}
 		request.getSession().setAttribute("fromConfirmationPage", true);
-		//
 
 		templateEngine.process(path, ctx, response.getWriter());
 	}

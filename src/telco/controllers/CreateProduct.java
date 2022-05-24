@@ -31,11 +31,12 @@ public class CreateProduct extends HttpServlet {
 			throws ServletException, IOException {
 		String name = request.getParameter("productname");
 		Integer monthlyFee = Integer.parseInt(request.getParameter("monthlyfee"));
-		if (name == null | name.isEmpty() | monthlyFee == null | monthlyFee == 0) {
+		if (name == null | name.isEmpty() | monthlyFee == null | monthlyFee <= 0) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Product parameters");
 			return;
 		}
-		pService.createProduct(name, monthlyFee);
+		String message = pService.createProduct(name, monthlyFee);
+		request.getSession().setAttribute("productMsg", message);
 		String ctxpath = getServletContext().getContextPath();
 		String path = ctxpath + "/GoToEmployeeHomePage";
 		response.sendRedirect(path);

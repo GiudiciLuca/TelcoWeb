@@ -18,10 +18,14 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import telco.entities.Order;
 import telco.entities.Package;
 import telco.entities.Product;
+import telco.entities.ValPeriod;
+import telco.services.OrderService;
 import telco.services.PackageService;
 import telco.services.ProductService;
+import telco.services.ValPeriodService;
 
 @WebServlet("/GoToConfirmationPage")
 public class GoToConfirmationPage extends HttpServlet {
@@ -32,6 +36,10 @@ public class GoToConfirmationPage extends HttpServlet {
 	private PackageService packageService;
 	@EJB(name = "telco.services/ProductService")
 	private ProductService productService;
+	@EJB(name = "telco.services/ValPeriodService")
+	private ValPeriodService valPeriodService;
+	@EJB(name = "telco.services/OrderService")
+	private OrderService orderService;
 
 	public GoToConfirmationPage() {
 		super();
@@ -46,36 +54,61 @@ public class GoToConfirmationPage extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 	
-	//TODO: to check
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		Integer valPeriod = Integer.parseInt(request.getParameter("valperiod"));
-		Date startDate = Date.valueOf(request.getParameter("startdate"));
-		Integer packageId = Integer.parseInt(request.getParameter("package"));
-		String[] optionalProductsParam = request.getParameterValues("optionalproduct");
-		
-		Package pack = packageService.findById(packageId);
-		
+		Integer valPeriodId;
+		ValPeriod validityPeriod;
+		Date startDate;
+		Package pack;
 		List<Product> optionalProducts = new ArrayList<Product>();
-		for(String s : optionalProductsParam) {
-			optionalProducts.add(productService.findByName(s));
+		
+		if(request.getParameter("orderId") != null) {
+			Integer orderId = Integer.parseInt(request.getParameter("orderId"));
+			Order o = orderService.findById(orderId);
+			
+			//
+			request.getSession().setAttribute("rejectedOrder", o);
+			
+			optionalProducts = o.getProducts();
+			valPeriodId = o.getValPeriod().getId();
+			validityPeriod = o.getValPeriod();
+			startDate = o.getStartDate();
+			pack = o.getPackage();
+		} else {
+			valPeriodId = Integer.parseInt(request.getParameter("valperiod"));
+			startDate = Date.valueOf(request.getParameter("startdate"));
+			Integer packageId = Integer.parseInt(request.getParameter("package"));
+			String[] optionalProductsName = request.getParameterValues("optionalproduct");
+			request.getSession().setAttribute("valPeriod", valPeriodId);
+			request.getSession().setAttribute("startDate", startDate);
+			request.getSession().setAttribute("packageId", packageId);
+			request.getSession().setAttribute("optionalProductsName", optionalProductsName);
+			
+			pack = packageService.findById(packageId);
+			validityPeriod = valPeriodService.findById(valPeriodId);
+			
+			if(optionalProductsName != null) {
+				for(String s : optionalProductsName) {
+					Integer optionalProduct = Integer.parseInt(s);
+					optionalProducts.add(productService.findById(optionalProduct));
+				}
+			}
 		}
 		
 		String path = "/WEB-INF/ConfirmationPage.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
-		ctx.setVariable("valperiod", valPeriod);
+		ctx.setVariable("valperiod", valPeriodId);
 		ctx.setVariable("startdate", startDate);
 		ctx.setVariable("package", pack);
 		ctx.setVariable("optionalproducts", optionalProducts);
 		
-		//TODO: check with the requirements if it is the correct value of total price
-		Integer totalPrice = pack.getMonthlyFee()*valPeriod;
+		Integer totalPrice = validityPeriod.getMonthlyfee()*validityPeriod.getMonths();
 		if(!optionalProducts.isEmpty()) {
 			for(Product o : optionalProducts) {
-				totalPrice = totalPrice + o.getMonthlyFee()*valPeriod;
+				totalPrice = totalPrice + o.getMonthlyFee()*validityPeriod.getMonths();
 			}
 		}
 		ctx.setVariable("totalprice", totalPrice);

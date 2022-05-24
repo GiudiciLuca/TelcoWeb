@@ -19,12 +19,16 @@
 	<form th:action="@{/CreatePackage}" method="POST">
 		Name: <input type="text" name="packagename" required>
 		<br> 
-		<label for="valperiod">Select a validity period:</label>
-		<select name="valperiod" id="valperiod">
-			<option value="12">12 months</option> 
-			<option value="24">24 months</option>
-			<option value="36">36 months</option>
-		</select>  
+		<label for="valperiod">Choose 1 or more validity periods:</label>
+		<table>
+			<tbody>
+				<tr th:each="v: ${valperiods}">
+					<td th:text="${v.months}"></td>
+					<td><input name="valperiod" th:value="${v.id}"
+						type="checkbox"></td>
+				</tr>
+			</tbody>
+		</table>
 		<br> 
 		<label for="optionalproduct">Choose 1 or more services:</label> 
 		<br>
@@ -32,7 +36,7 @@
 			<tbody>
 				<tr th:each="s: ${services}">
 					<td th:text="${s.type}"></td>
-					<td><input name="service" th:value="${s.type}"
+					<td><input name="service" th:value="${s.id}"
 						type="checkbox"></td>
 				</tr>
 			</tbody>
@@ -45,16 +49,16 @@
 				<tr th:each="p: ${products}">
 					<td th:text="${p.name}"></td>
 					<td th:text="${p.monthlyFee}"></td>
-					<td><input name="optionalproduct" th:value="${p.name}"
+					<td><input name="optionalproduct" th:value="${p.id}"
 						type="checkbox"></td>
 				</tr>
 			</tbody>
 		</table>
 		<br> 
 		<input type="submit" value="Create package">
+		<p th:text=" ${packageMsg}"></p>
 	</form>
-
-	<br>
+	
 	<br>
 
 	<!-- Form for create optional products -->
@@ -63,6 +67,7 @@
 		Name: <input type="text" name="productname" required><br>
 		Monthly Fee: <input type="number" name="monthlyfee" required><br>
 		<input type="submit" value="Create product">
+		<p th:text=" ${productMsg}"></p>
 	</form>
 
 	<br>

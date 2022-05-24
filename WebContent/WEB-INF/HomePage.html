@@ -22,17 +22,11 @@
 	<h3>Click on the name of the package to buy it!</h3>
 	<table>
 		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Validity Period</th>
-				<th>Monthly Fee</th>
-			</tr>
 		</thead>
 		<tbody>
 			<tr th:each="p : ${packages}">
 				<td><a th:href="@{/GoToBuyServicePage(packageId=${p.id})}" th:text="${p.name}"></a></td>
-				<td th:text="${p.valPeriod}"></td>
-				<td th:text="${p.monthlyFee}"></td>
+				<td th:each="s : ${p.getServices()}" th:text="${s.type}"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -52,9 +46,33 @@
 				</thead>
 				<tbody>
 					<tr th:each="o : ${rejectedOrders}">
+						<td><a th:href="@{/GoToConfirmationPage(orderId=${o.id})}" th:text="'Order number: ' + ${o.id}"></a></td>
 						<td th:text="${o.dateTime}"></td>
 						<td th:text="${o.totalValue}"></td>
 						<td th:text="${o.startDate}"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div th:if="${sas != null}">
+		<div th:if="${!sas.empty}">
+			<h2>Service Activation Schedule</h2>
+			<h3>(for demo purpose only)</h3>
+			<table>
+				<thead>
+					<tr>
+						<td>Order</td>
+						<td>Start Date</td>
+						<td>Deactivation Date</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="s : ${sas}">
+						<td th:text="'Order number: ' + ${s.order.getId()}"></td>
+						<td th:text="${s.order.getStartDate()}"></td>
+						<td th:text="${s.deactivationDate}"></td>
 					</tr>
 				</tbody>
 			</table>

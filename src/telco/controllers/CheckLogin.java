@@ -49,6 +49,11 @@ public class CheckLogin extends HttpServlet {
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
+		
+		// used to know if CheckLogin is called from the Confirmation page
+		if (request.getSession().getAttribute("fromConfirmationPage") == null)
+			request.getSession().setAttribute("fromConfirmationPage", false);
+		boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
 
 		try {
 			usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
@@ -70,16 +75,21 @@ public class CheckLogin extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not check credentials");
 			return;
 		}
-
-		// TODO: check @Registration to implement something similar for when there is an
-		// error in the login process coming from the confirmation page
+		
 		String path;
 		if (user == null) {
-			ServletContext servletContext = getServletContext();
-			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", "Incorrect username or password");
-			path = "/index.html";
-			templateEngine.process(path, ctx, response.getWriter());
+			//if coming from Confirmation Page (or from Login Registration Page) and user login incorrectly reload the Login Registration Page
+			if(fromConfirmationPage) {
+				path = getServletContext().getContextPath() + "/GoToLogin";
+				request.getSession().setAttribute("loginMsg", "Incorrect username or password");
+				response.sendRedirect(path);
+			} else {
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+				ctx.setVariable("errorMsg", "Incorrect username or password");
+				path = "/index.html";
+				templateEngine.process(path, ctx, response.getWriter());
+			}
 		} else {
 			QueryService qService = null;
 			try {
@@ -97,16 +107,27 @@ public class CheckLogin extends HttpServlet {
 				e.printStackTrace();
 			}
 			request.getSession().setAttribute("user", user);
+			
+			//TODO: to check if it is used
 			request.getSession().setAttribute("queryService", qService);
 
-			// TODO to improve
-			if (request.getSession().getAttribute("fromConfirmationPage") == null)
-				request.getSession().setAttribute("fromConfirmationPage", false);
-
-			boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
-
+			//if coming from Confirmation Page (or from Login Registration Page) come back to Confirmation Page
 			if (fromConfirmationPage) {
-				path = getServletContext().getContextPath() + "/GoToConfirmationPage";
+				request.getSession().removeAttribute("loginMsg");
+				String[] optionalProductsName = (String[]) request.getSession().getAttribute("optionalProductsName");
+				String optionalProductsPath = "";
+				
+				if(optionalProductsName != null) {
+					for(String s : optionalProductsName) {
+						optionalProductsPath = optionalProductsPath + "&optionalproduct=" + s;
+					}
+				}
+				
+				path = getServletContext().getContextPath() + "/GoToConfirmationPage?valperiod="
+						+ request.getSession().getAttribute("valPeriod") + optionalProductsPath + "&startdate="
+						+ request.getSession().getAttribute("startDate") + "&package="
+						+ request.getSession().getAttribute("packageId");
+
 				request.getSession().setAttribute("fromConfirmationPage", false);
 			} else if (user.getEmployee())
 				path = getServletContext().getContextPath() + "/GoToEmployeeHomePage";

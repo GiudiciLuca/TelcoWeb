@@ -17,6 +17,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import telco.entities.Product;
+import telco.entities.ValPeriod;
 import telco.entities.Package;
 import telco.services.PackageService;
 
@@ -46,14 +47,17 @@ public class GoToBuyServicePage extends HttpServlet {
 		Integer packageId = null;
 		Package pack = null;
 		List<Product> products = null;
+		List<ValPeriod> valPeriods = null;
 
 		if (request.getParameterMap().containsKey("packageId") && request.getParameter("packageId") != ""
 				&& !request.getParameter("packageId").isEmpty()) {
 			packageId = Integer.parseInt(request.getParameter("packageId"));
 		}
+		
 		if (packageId != null) {
 			pack = packageService.findById(packageId);
 			products = packageService.findProducts(packageId);
+			valPeriods = packageService.findValPeriods(packageId);
 		}
 
 		String path = "/WEB-INF/BuyServicePage.html";
@@ -61,6 +65,7 @@ public class GoToBuyServicePage extends HttpServlet {
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		if (packageId != null) {
 			ctx.setVariable("products", products);
+			ctx.setVariable("valperiods", valPeriods);
 			ctx.setVariable("package", pack);
 		}
 		templateEngine.process(path, ctx, response.getWriter());

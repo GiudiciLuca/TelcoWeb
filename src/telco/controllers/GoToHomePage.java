@@ -14,9 +14,12 @@ import org.thymeleaf.TemplateEngine;
 
 import telco.entities.Order;
 import telco.entities.Package;
+import telco.entities.SAS;
 import telco.entities.User;
 import telco.services.OrderService;
 import telco.services.PackageService;
+import telco.services.SasService;
+
 import java.util.List;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -35,6 +38,9 @@ public class GoToHomePage extends HttpServlet {
 
 	@EJB(name = "telco.services/OrderService")
 	private OrderService orderService;
+	
+	@EJB(name = "telco.services/SasService")
+	private SasService sasService;
 
 	public GoToHomePage() {
 		super();
@@ -54,36 +60,12 @@ public class GoToHomePage extends HttpServlet {
 
 		List<Package> packages = null;
 		packages = packageService.findAllPackages();
-
-		//TODO: delete this part because it is USELESS for us
-		//we don't update this page with a selected package
-		//we go to "Buy Service Page" once select a package
-		/*
-		Package chosenPackage = null;
-		Integer chosen = null;
-		if (request.getParameterMap().containsKey("packageId") && request.getParameter("packageId") != ""
-				&& !request.getParameter("packageId").isEmpty()) {
-			try {
-				chosen = Integer.parseInt(request.getParameter("packageId"));
-			} catch (Exception e) {
-				response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Package parameters");
-				return;
-			}
-		}
-		if (chosen != null)
-			chosenPackage = packageService.findById(chosen);
-		if (chosen == null | chosenPackage == null)
-			chosenPackage = packageService.findDefault();
-		*/
+		
 		String path = "/WEB-INF/HomePage.html";
 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("packages", packages);
-		/*
-		if (chosenPackage != null)
-			ctx.setVariable("chosenpackage", chosenPackage);
-		*/
 
 		// There is the need to check if the user is null since an user can enter the application without logging in
 		User user = (User) request.getSession().getAttribute("user");
@@ -91,6 +73,11 @@ public class GoToHomePage extends HttpServlet {
 			List<Order> rejectedOrders = null;
 			rejectedOrders = orderService.findRejectedOrdersByUserId(user.getId());
 			ctx.setVariable("rejectedOrders", rejectedOrders);
+						
+			// For demo only we decided to show the service activation schedule
+			List<SAS> sas = null;
+			sas = sasService.findAllByUser(user);
+			ctx.setVariable("sas", sas);
 		}
 
 		templateEngine.process(path, ctx, response.getWriter());
