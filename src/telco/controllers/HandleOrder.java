@@ -96,6 +96,7 @@ public class HandleOrder extends HttpServlet {
 			}
 		} else {
 			if (typeOfPayment.equals("Correct payment")) {
+
 				Order validOrder = oService.validOrder(rejectedOrder);
 				Date deactivationDate = Date.valueOf(startDate.toLocalDate().plusMonths(valPeriod.getMonths()));
 				sasService.createSas(user, deactivationDate, validOrder);
@@ -104,7 +105,10 @@ public class HandleOrder extends HttpServlet {
 			}
 		}
 
-		//
+		// To initialize the rejected order
+		request.getSession().setAttribute("rejectedOrder", null);
+
+		// Handle Order and Alert
 		List<Order> allUserRejectedOrders = oService.findRejectedOrdersByUserId(user.getId());
 		uService.handleInsolvent(user, allUserRejectedOrders);
 		int failedPayments = 0;

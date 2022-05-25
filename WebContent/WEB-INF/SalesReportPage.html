@@ -14,5 +14,85 @@
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
 
+	<div>
+		<h2>Purchases Per Package</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Package Id</td>
+					<td>Number of Purchases</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="p : ${ppp}">
+					<td th:text="${p.packageId}"></td>
+					<td th:text="${p.totPurchases}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div>
+		<h2>Purchases Per Package and Validity Period</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Package Id</td>
+					<td>Validity Period Id</td>
+					<td>Number of Purchases</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="pvp : ${pppvp}">
+					<td th:text="${pvp.id.packageId}"></td>
+					<td th:text="${pvp.id.valPeriodId}"></td>
+					<td th:text="${pvp.totPurchases}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+		<h2>Amount Sales Per Package</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Package Id</td>
+					<td>Total amounts with optional products</td>
+					<td>Total amounts without optional products</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="asp : ${aspp}">
+					<td th:text="${asp.packageId}"></td>
+					<td th:text="${asp.totSaleWithProducts}"></td>
+					<td th:text="${asp.totSaleWithoutProducts}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+		<h2>Average Products Per Package</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Package Id</td>
+					<td>Total products</td>
+					<td>Total orders</td>
+					<td>Average products</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="app : ${appp}">
+					<td th:text="${app.packageId}"></td>
+					<td th:text="${app.totProducts}"></td>
+					<td th:text="${app.totOrders}"></td>
+					<td th:text="${app.avgProducts}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 </body>
 </html>
