@@ -118,7 +118,7 @@ public class HandleOrder extends HttpServlet {
 			totalAmount = totalAmount + o.getTotalValue();
 		}
 		if (failedPayments >= 3) {
-			aService.handleAlert(user, totalAmount);
+			aService.handleAlert(user, totalAmount,typeOfPayment);
 		} else
 			aService.deleteAlert(user);
 

@@ -16,11 +16,18 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import telco.entities.Alert;
+import telco.entities.Order;
+import telco.entities.User;
 import telco.forTriggers.AmountSalesPerPackage;
 import telco.forTriggers.AverageProductsPerPackage;
+import telco.forTriggers.BestSellerOptProduct;
 import telco.forTriggers.PurchasesPerPackage;
 import telco.forTriggers.PurchasesPerPackageAndVp;
 import telco.forTriggers.ViewService;
+import telco.services.AlertService;
+import telco.services.OrderService;
+import telco.services.UserService;
 
 @WebServlet("/GoToSalesReportPage")
 public class GoToSalesReportPage extends HttpServlet {
@@ -29,6 +36,12 @@ public class GoToSalesReportPage extends HttpServlet {
 	
 	@EJB(name = "telco.forTriggers/ViewService")
 	private ViewService viewService;
+	@EJB(name = "telco.services/AlertService")
+	private AlertService aService;
+	@EJB(name = "telco.services/UserService")
+	private UserService uService;
+	@EJB(name = "telco.services/OrderService")
+	private OrderService oService;
 	
 	public GoToSalesReportPage() {
 		super();
@@ -50,6 +63,10 @@ public class GoToSalesReportPage extends HttpServlet {
 		List<PurchasesPerPackageAndVp> pppvp = viewService.totalPurchasesPerPackageAndVp();
 		List<AmountSalesPerPackage> aspp = viewService.totalAmountSalesPerPackage();
 		List<AverageProductsPerPackage> appp = viewService.totalAverageProductsPerPackage();
+		BestSellerOptProduct bsop = viewService.totalBestSellerOptProduct().get(0);
+		List<User> insolventUsers = uService.findInsolvents();
+		List<Order> rejectedOrders = oService.findAllRejectedOrders();
+		List<Alert> totAlerts = aService.findAllAlerts();
 		
 		String path = "/WEB-INF/SalesReportPage.html";
 		ServletContext servletContext = getServletContext();
@@ -59,6 +76,10 @@ public class GoToSalesReportPage extends HttpServlet {
 		ctx.setVariable("pppvp", pppvp);
 		ctx.setVariable("aspp", aspp);
 		ctx.setVariable("appp", appp);
+		ctx.setVariable("bsop", bsop);
+		ctx.setVariable("insolventUsers", insolventUsers);
+		ctx.setVariable("rejectedOrders", rejectedOrders);
+		ctx.setVariable("totAlerts", totAlerts);
 		
 		templateEngine.process(path, ctx, response.getWriter());
 	}

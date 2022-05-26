@@ -106,7 +106,9 @@ public class CheckLogin extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			request.getSession().setAttribute("user", user);
+			
+			if(!user.getEmployee())
+				request.getSession().setAttribute("user", user);
 			
 			//TODO: to check if it is used
 			request.getSession().setAttribute("queryService", qService);

@@ -93,6 +93,86 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<div>
+		<h2>Best Seller Optional Product</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Product Id</td>
+					<td>Number of Purchases</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td th:text="${bsop.productId}"></td>
+					<td th:text="${bsop.totAmount}"></td>
+				</tr>	
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+		<h2>Insolvent Users</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>User Id</td>
+					<td>Username</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="u : ${insolventUsers}">
+					<td th:text="${u.id}"></td>
+					<td th:text="${u.username}"></td>
+				</tr>	
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+		<h2>Rejected Orders</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Order Id</td>
+					<td>Date time</td>
+					<td>Total Value</td>
+					<td>User Id</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="o : ${rejectedOrders}">
+					<td th:text="${o.id}"></td>
+					<td th:text="${o.dateTime}"></td>
+					<td th:text="${o.totalValue}"></td>
+					<td th:text="${o.user.id}"></td>
+				</tr>	
+			</tbody>
+		</table>
+	</div>
+	
+	<div>
+		<h2>Alerts</h2>
+		<table>
+			<thead>
+				<tr>
+					<td>Alert Id</td>
+					<td>User Id</td>
+					<td>Total Amount</td>
+					<td>Last Rejection</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="a : ${totAlerts}">
+					<td th:text="${a.id}"></td>
+					<td th:text="${a.user.id}"></td>
+					<td th:text="${a.amount}"></td>
+					<td th:text="${a.lastRejection}"></td>
+				</tr>	
+			</tbody>
+		</table>
+	</div>
 
 </body>
 </html>

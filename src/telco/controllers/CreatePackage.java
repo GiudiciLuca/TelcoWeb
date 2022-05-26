@@ -30,8 +30,7 @@ public class CreatePackage extends HttpServlet {
 		String[] services = request.getParameterValues("service");
 		String[] products = request.getParameterValues("optionalproduct");
 		
-		if (name == null | name.isEmpty() | valPeriods == null | valPeriods.length == 0 | services == null
-				| services.length == 0) {
+		if (name == null | name.isEmpty() | valPeriods == null | services == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid package parameters");
 			return;
 		}

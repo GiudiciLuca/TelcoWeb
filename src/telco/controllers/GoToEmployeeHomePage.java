@@ -68,6 +68,14 @@ public class GoToEmployeeHomePage extends HttpServlet {
 			String packageMsg = (String) request.getSession().getAttribute("packageMsg");
 			ctx.setVariable("packageMsg", packageMsg);
 		}
+		
+		if (request.getSession().getAttribute("productMsg") != null) {
+			String productMsg = (String) request.getSession().getAttribute("productMsg");
+			ctx.setVariable("productMsg", productMsg);
+		}
+		
+		request.getSession().setAttribute("packageMsg",null);
+		request.getSession().setAttribute("productMsg",null);
 
 		ctx.setVariable("products", products);
 		ctx.setVariable("services", services);
