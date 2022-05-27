@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import telco.services.QueryService;
-
 @WebServlet("/Logout")
 public class Logout extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -24,12 +22,9 @@ public class Logout extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 		
-		//TODO: check if Query Service is useful
-		if (session != null) {
-			// QueryService qs = (QueryService) session.getAttribute("queryService");
-			// if (qs != null) qs.remove();
+		if (session != null) 
 			session.invalidate();
-		}
+		
 		String path = getServletContext().getContextPath() + "/index.html";
 		response.sendRedirect(path);
 	}

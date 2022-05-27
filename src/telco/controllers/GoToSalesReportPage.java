@@ -63,20 +63,25 @@ public class GoToSalesReportPage extends HttpServlet {
 		List<PurchasesPerPackageAndVp> pppvp = viewService.totalPurchasesPerPackageAndVp();
 		List<AmountSalesPerPackage> aspp = viewService.totalAmountSalesPerPackage();
 		List<AverageProductsPerPackage> appp = viewService.totalAverageProductsPerPackage();
-		BestSellerOptProduct bsop = viewService.totalBestSellerOptProduct().get(0);
+		List<BestSellerOptProduct> bsop = viewService.totalBestSellerOptProduct();
+		BestSellerOptProduct best = null;
 		List<User> insolventUsers = uService.findInsolvents();
 		List<Order> rejectedOrders = oService.findAllRejectedOrders();
 		List<Alert> totAlerts = aService.findAllAlerts();
+		
 		
 		String path = "/WEB-INF/SalesReportPage.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		
+		if (!bsop.isEmpty())
+			best = bsop.get(0);
+		
 		ctx.setVariable("ppp", ppp);
 		ctx.setVariable("pppvp", pppvp);
 		ctx.setVariable("aspp", aspp);
 		ctx.setVariable("appp", appp);
-		ctx.setVariable("bsop", bsop);
+		ctx.setVariable("best", best);
 		ctx.setVariable("insolventUsers", insolventUsers);
 		ctx.setVariable("rejectedOrders", rejectedOrders);
 		ctx.setVariable("totAlerts", totAlerts);

@@ -20,12 +20,14 @@
 			<thead>
 				<tr>
 					<td>Package Id</td>
+					<td>Package Name</td>
 					<td>Number of Purchases</td>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="p : ${ppp}">
 					<td th:text="${p.packageId}"></td>
+					<td th:text="${p.packageName}"></td>
 					<td th:text="${p.totPurchases}"></td>
 				</tr>
 			</tbody>
@@ -38,14 +40,16 @@
 			<thead>
 				<tr>
 					<td>Package Id</td>
-					<td>Validity Period Id</td>
+					<td>Package Name</td>
+					<td>Validity Period</td>
 					<td>Number of Purchases</td>
 				</tr>
 			</thead>
 			<tbody>
 				<tr th:each="pvp : ${pppvp}">
 					<td th:text="${pvp.id.packageId}"></td>
-					<td th:text="${pvp.id.valPeriodId}"></td>
+					<td th:text="${pvp.packageName}"></td>
+					<td th:text="${pvp.valPeriodMonths} + ' months'"></td>
 					<td th:text="${pvp.totPurchases}"></td>
 				</tr>
 			</tbody>
@@ -58,6 +62,7 @@
 			<thead>
 				<tr>
 					<td>Package Id</td>
+					<td>Package Name</td>
 					<td>Total amounts with optional products</td>
 					<td>Total amounts without optional products</td>
 				</tr>
@@ -65,6 +70,7 @@
 			<tbody>
 				<tr th:each="asp : ${aspp}">
 					<td th:text="${asp.packageId}"></td>
+					<td th:text="${asp.packageName}"></td>
 					<td th:text="${asp.totSaleWithProducts}"></td>
 					<td th:text="${asp.totSaleWithoutProducts}"></td>
 				</tr>
@@ -78,6 +84,7 @@
 			<thead>
 				<tr>
 					<td>Package Id</td>
+					<td>Package Name</td>
 					<td>Total products</td>
 					<td>Total orders</td>
 					<td>Average products</td>
@@ -86,6 +93,7 @@
 			<tbody>
 				<tr th:each="app : ${appp}">
 					<td th:text="${app.packageId}"></td>
+					<td th:text="${app.packageName}"></td>
 					<td th:text="${app.totProducts}"></td>
 					<td th:text="${app.totOrders}"></td>
 					<td th:text="${app.avgProducts}"></td>
@@ -100,13 +108,15 @@
 			<thead>
 				<tr>
 					<td>Product Id</td>
+					<td>Product Name</td>
 					<td>Number of Purchases</td>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td th:text="${bsop.productId}"></td>
-					<td th:text="${bsop.totAmount}"></td>
+				<tr th:if="${best} != null">
+					<td th:text="${best.productId}"></td>
+					<td th:text="${best.productName}"></td>
+					<td th:text="${best.totAmount}"></td>
 				</tr>	
 			</tbody>
 		</table>

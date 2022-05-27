@@ -17,12 +17,9 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import telco.services.UserService;
-import telco.services.QueryService;
 import telco.entities.User;
 import telco.exceptions.CredentialsException;
 import javax.persistence.NonUniqueResultException;
-
-import javax.naming.*;
 
 @WebServlet("/CheckLogin")
 public class CheckLogin extends HttpServlet {
@@ -91,27 +88,9 @@ public class CheckLogin extends HttpServlet {
 				templateEngine.process(path, ctx, response.getWriter());
 			}
 		} else {
-			QueryService qService = null;
-			try {
-				/*
-				 * We need one distinct EJB for each user. Get the Initial Context for the JNDI
-				 * lookup for a local EJB. Note that the path may be different in different EJB
-				 * environments. In IntelliJ use: ic.lookup(
-				 * "java:/openejb/local/ArtifactFileNameWeb/ArtifactNameWeb/QueryServiceLocalBean"
-				 * );
-				 */
-				InitialContext ic = new InitialContext();
-				// Retrieve the EJB using JNDI lookup
-				qService = (QueryService) ic.lookup("java:/openejb/local/QueryServiceLocalBean");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 			
 			if(!user.getEmployee())
 				request.getSession().setAttribute("user", user);
-			
-			//TODO: to check if it is used
-			request.getSession().setAttribute("queryService", qService);
 
 			//if coming from Confirmation Page (or from Login Registration Page) come back to Confirmation Page
 			if (fromConfirmationPage) {

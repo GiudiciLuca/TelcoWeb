@@ -71,7 +71,7 @@ public class GoToHomePage extends HttpServlet {
 		User user = (User) request.getSession().getAttribute("user");
 		if (user != null) {
 			List<Order> rejectedOrders = null;
-			rejectedOrders = orderService.findRejectedOrdersByUserId(user.getId());
+			rejectedOrders = orderService.findRejectedOrdersByUser(user);
 			ctx.setVariable("rejectedOrders", rejectedOrders);
 						
 			// For demo only we decided to show the service activation schedule

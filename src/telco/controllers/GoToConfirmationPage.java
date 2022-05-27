@@ -67,7 +67,6 @@ public class GoToConfirmationPage extends HttpServlet {
 			Integer orderId = Integer.parseInt(request.getParameter("orderId"));
 			Order o = orderService.findById(orderId);
 			
-			//
 			request.getSession().setAttribute("rejectedOrder", o);
 			
 			optionalProducts = o.getProducts();

@@ -50,7 +50,7 @@ public class HandleOrder extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
@@ -109,7 +109,7 @@ public class HandleOrder extends HttpServlet {
 		request.getSession().setAttribute("rejectedOrder", null);
 
 		// Handle Order and Alert
-		List<Order> allUserRejectedOrders = oService.findRejectedOrdersByUserId(user.getId());
+		List<Order> allUserRejectedOrders = oService.findRejectedOrdersByUser(user);
 		uService.handleInsolvent(user, allUserRejectedOrders);
 		int failedPayments = 0;
 		int totalAmount = 0;
