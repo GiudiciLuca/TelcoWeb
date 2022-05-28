@@ -93,7 +93,7 @@ public class CheckLogin extends HttpServlet {
 				request.getSession().setAttribute("user", user);
 
 			//if coming from Confirmation Page (or from Login Registration Page) come back to Confirmation Page
-			if (fromConfirmationPage) {
+			if (fromConfirmationPage && !user.getEmployee()) {
 				request.getSession().removeAttribute("loginMsg");
 				String[] optionalProductsName = (String[]) request.getSession().getAttribute("optionalProductsName");
 				String optionalProductsPath = "";
@@ -109,12 +109,13 @@ public class CheckLogin extends HttpServlet {
 						+ request.getSession().getAttribute("startDate") + "&package="
 						+ request.getSession().getAttribute("packageId");
 
-				request.getSession().setAttribute("fromConfirmationPage", false);
 			} else if (user.getEmployee())
 				path = getServletContext().getContextPath() + "/GoToEmployeeHomePage";
 			else
 				path = getServletContext().getContextPath() + "/GoToHomePage";
-
+			
+			request.getSession().setAttribute("fromConfirmationPage", false);
+			
 			response.sendRedirect(path);
 		}
 	}
