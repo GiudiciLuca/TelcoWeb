@@ -49,16 +49,21 @@ public class GoToBuyServicePage extends HttpServlet {
 		List<Product> products = null;
 		List<ValPeriod> valPeriods = null;
 
-		if (request.getParameterMap().containsKey("packageId") && request.getParameter("packageId") != ""
-				&& !request.getParameter("packageId").isEmpty()) {
+		try {
 			packageId = Integer.parseInt(request.getParameter("packageId"));
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request on package parameter");
+			return;
 		}
-		
-		if (packageId != null) {
-			pack = packageService.findById(packageId);
-			products = packageService.findProducts(packageId);
-			valPeriods = packageService.findValPeriods(packageId);
+
+		pack = packageService.findById(packageId);
+		if (pack == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Incorrect package parameter");
+			return;
 		}
+
+		products = packageService.findProducts(packageId);
+		valPeriods = packageService.findValPeriods(packageId);
 
 		String path = "/WEB-INF/BuyServicePage.html";
 		ServletContext servletContext = getServletContext();

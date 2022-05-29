@@ -51,6 +51,11 @@ public class GoToEmployeeHomePage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		if (request.getSession().getAttribute("user") != null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User not allowed");
+			return;
+		}
+
 		List<Product> products = null;
 		products = pService.findAllProducts();
 
@@ -68,14 +73,14 @@ public class GoToEmployeeHomePage extends HttpServlet {
 			String packageMsg = (String) request.getSession().getAttribute("packageMsg");
 			ctx.setVariable("packageMsg", packageMsg);
 		}
-		
+
 		if (request.getSession().getAttribute("productMsg") != null) {
 			String productMsg = (String) request.getSession().getAttribute("productMsg");
 			ctx.setVariable("productMsg", productMsg);
 		}
-		
-		request.getSession().setAttribute("packageMsg",null);
-		request.getSession().setAttribute("productMsg",null);
+
+		request.getSession().setAttribute("packageMsg", null);
+		request.getSession().setAttribute("productMsg", null);
 
 		ctx.setVariable("products", products);
 		ctx.setVariable("services", services);

@@ -46,7 +46,7 @@ public class CheckLogin extends HttpServlet {
 		// obtain and escape params
 		String usrn = null;
 		String pwd = null;
-		
+
 		// used to know if CheckLogin is called from the Confirmation page
 		if (request.getSession().getAttribute("fromConfirmationPage") == null)
 			request.getSession().setAttribute("fromConfirmationPage", false);
@@ -59,7 +59,6 @@ public class CheckLogin extends HttpServlet {
 				throw new Exception("Missing or empty credential value");
 			}
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
 			return;
 		}
@@ -72,11 +71,12 @@ public class CheckLogin extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not check credentials");
 			return;
 		}
-		
+
 		String path;
 		if (user == null) {
-			//if coming from Confirmation Page (or from Login Registration Page) and user login incorrectly reload the Login Registration Page
-			if(fromConfirmationPage) {
+			// if coming from Confirmation Page (or from Login Registration Page) and user
+			// login incorrectly reload the Login Registration Page
+			if (fromConfirmationPage) {
 				path = getServletContext().getContextPath() + "/GoToLogin";
 				request.getSession().setAttribute("loginMsg", "Incorrect username or password");
 				response.sendRedirect(path);
@@ -88,22 +88,23 @@ public class CheckLogin extends HttpServlet {
 				templateEngine.process(path, ctx, response.getWriter());
 			}
 		} else {
-			
-			if(!user.getEmployee())
+
+			if (!user.getEmployee())
 				request.getSession().setAttribute("user", user);
 
-			//if coming from Confirmation Page (or from Login Registration Page) come back to Confirmation Page
+			// if coming from Confirmation Page (or from Login Registration Page) come back
+			// to Confirmation Page
 			if (fromConfirmationPage && !user.getEmployee()) {
 				request.getSession().removeAttribute("loginMsg");
 				String[] optionalProductsName = (String[]) request.getSession().getAttribute("optionalProductsName");
 				String optionalProductsPath = "";
-				
-				if(optionalProductsName != null) {
-					for(String s : optionalProductsName) {
+
+				if (optionalProductsName != null) {
+					for (String s : optionalProductsName) {
 						optionalProductsPath = optionalProductsPath + "&optionalproduct=" + s;
 					}
 				}
-				
+
 				path = getServletContext().getContextPath() + "/GoToConfirmationPage?valperiod="
 						+ request.getSession().getAttribute("valPeriod") + optionalProductsPath + "&startdate="
 						+ request.getSession().getAttribute("startDate") + "&package="
@@ -113,9 +114,9 @@ public class CheckLogin extends HttpServlet {
 				path = getServletContext().getContextPath() + "/GoToEmployeeHomePage";
 			else
 				path = getServletContext().getContextPath() + "/GoToHomePage";
-			
+
 			request.getSession().setAttribute("fromConfirmationPage", false);
-			
+
 			response.sendRedirect(path);
 		}
 	}

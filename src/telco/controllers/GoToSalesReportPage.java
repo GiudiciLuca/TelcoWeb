@@ -59,6 +59,9 @@ public class GoToSalesReportPage extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
+		if(request.getSession().getAttribute("user") != null)
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "User not allowed");
+		
 		List<PurchasesPerPackage> ppp = viewService.totalPurchasesPerPackage();
 		List<PurchasesPerPackageAndVp> pppvp = viewService.totalPurchasesPerPackageAndVp();
 		List<AmountSalesPerPackage> aspp = viewService.totalAmountSalesPerPackage();

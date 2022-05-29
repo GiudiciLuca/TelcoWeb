@@ -68,7 +68,6 @@ public class HandleOrder extends HttpServlet {
 		if (request.getSession().getAttribute("rejectedOrder") != null)
 			rejectedOrder = (Order) request.getSession().getAttribute("rejectedOrder");
 
-		// TODO need to add all the check for the parameter
 		if (packageId == null | totalPrice == null | valPeriodId == null | startDate == null | typeOfPayment == null
 				| user == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid order parameters");

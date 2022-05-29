@@ -54,7 +54,6 @@ public class Registration extends HttpServlet {
 				throw new Exception("Missing or empty credential value");
 			}
 		} catch (Exception e) {
-			// for debugging only e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
 			return;
 		}
@@ -73,13 +72,14 @@ public class Registration extends HttpServlet {
 		if (request.getSession().getAttribute("fromConfirmationPage") == null)
 			request.getSession().setAttribute("fromConfirmationPage", false);
 		boolean fromConfirmationPage = (boolean) request.getSession().getAttribute("fromConfirmationPage");
-		
+
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 
-		//If error during registration
+		// If error during registration
 		if (error.equals("OK")) {
-			//if coming from Confirmation Page (or from Login Registration Page) and user register incorrectly reload the Login Registration Page
+			// if coming from Confirmation Page (or from Login Registration Page) and user
+			// register incorrectly reload the Login Registration Page
 			if (fromConfirmationPage) {
 				path = getServletContext().getContextPath() + "/GoToLogin";
 				request.getSession().setAttribute("regMsg", "Registration successful");
