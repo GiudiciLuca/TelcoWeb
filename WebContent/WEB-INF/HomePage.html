@@ -4,32 +4,34 @@
 <meta charset="ISO-8859-1">
 <title>Customer Telco Home</title>
 <link rel="stylesheet" type="text/css" media="all"
-	href="../CSS/style.css" th:href="@{/css/style.css}" />
+	href="../css/style.css" th:href="@{/css/style.css}" />
 </head>
 <body>
 
 	<h1>Telco Home Page</h1>
 
-	<div align="right">
+	<div th:if="${session.user != null}" align="right">
+		<p th:text="${session.user.username}"></p>
 		<a th:href="@{/Logout}">Logout</a>
 	</div>
 
-	<div th:if="${session.user != null}" align="right">
-		<p th:text="${session.user.username}"></p>
-	</div>
-
 	<h2>Service Packages</h2>
-	<h3>Click on the name of the package to buy it!</h3>
-	<table>
-		<thead>
-		</thead>
-		<tbody>
-			<tr th:each="p : ${packages}">
-				<td><a th:href="@{/GoToBuyServicePage(packageId=${p.id})}" th:text="${p.name}"></a></td>
-				<td th:each="s : ${p.getServices()}" th:text="${s.type}"></td>
-			</tr>
-		</tbody>
-	</table>
+	<div th:if = "${packages.empty}">
+		<h3>There are no service packages yet, please wait for an employee that will create them!</h3>
+	</div>
+	<div th:if="${!packages.empty}">
+		<h3>Click on the name of the package to buy it!</h3>
+		<table>
+			<thead>
+			</thead>
+			<tbody>
+				<tr th:each="p : ${packages}">
+					<td><a th:href="@{/GoToBuyServicePage(packageId=${p.id})}" th:text="${p.name}"></a></td>
+					<td th:each="s : ${p.getServices()}" th:text="${s.type}"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 	
 	<br> <br>
 	
@@ -39,6 +41,7 @@
 			<table>
 				<thead>
 					<tr>
+						<td>Order number</td>
 						<td>Date and Time</td>
 						<td>Total Value</td>
 						<td>Start Date</td>
@@ -46,7 +49,7 @@
 				</thead>
 				<tbody>
 					<tr th:each="o : ${rejectedOrders}">
-						<td><a th:href="@{/GoToConfirmationPage(orderId=${o.id})}" th:text="'Order number: ' + ${o.id}"></a></td>
+						<td><a th:href="@{/GoToConfirmationPage(orderId=${o.id})}" th:text="${o.id}"></a></td>
 						<td th:text="${o.dateTime}"></td>
 						<td th:text="${o.totalValue}"></td>
 						<td th:text="${o.startDate}"></td>
@@ -63,14 +66,14 @@
 			<table>
 				<thead>
 					<tr>
-						<td>Order</td>
+						<td>Order number</td>
 						<td>Start Date</td>
 						<td>Deactivation Date</td>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="s : ${sas}">
-						<td th:text="'Order number: ' + ${s.order.getId()}"></td>
+						<td th:text="${s.order.getId()}"></td>
 						<td th:text="${s.order.getStartDate()}"></td>
 						<td th:text="${s.deactivationDate}"></td>
 					</tr>

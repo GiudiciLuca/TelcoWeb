@@ -4,15 +4,11 @@
 <meta charset="ISO-8859-1">
 <title>Customer Telco Confirmation</title>
 <link rel="stylesheet" type="text/css" media="all"
-	href="../CSS/style.css" th:href="@{/css/style.css}" />
+	href="../css/style.css" th:href="@{/css/style.css}" />
 </head>
 <body>
 
 	<h1>Telco Confirmation Page</h1>
-
-	<div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div>
 
 	<div th:if="${session.user == null}">
 		<p>Before continue you need to login or register</p>
@@ -21,23 +17,26 @@
 
 	<div th:if="${session.user != null}" align="right">
 		<p th:text="${session.user.username}"></p>
+		<a th:href="@{/Logout}">Logout</a>
 	</div>
 	
-	<!--// TODO: method to call the fail or correct payment -->
 	<div th:if="${session.user != null}">
 		<form th:action="@{/HandleOrder}" method="POST">
 			<h2>Order summary</h2>
 			<table>
 				<tbody>
 					<tr>
-						<td th:text="'Package: ' + ${package.name}"></td>
+						<th>Package</th>
+						<td th:text="${package.name}"></td>
 					</tr>
 					<tr th:if="${!optionalproducts.empty}" th:each="p : ${optionalproducts}">
-						<td  th:text="${p.name}"></td>
+						<th>Optional product</th>
+						<td th:text="${p.name}"></td>
 						<td><input type="hidden" name="products" th:value="${p.id}"></td>
 					</tr>
 					<tr>
-						<td th:text="'Total price ' + ${totalprice}"></td>
+						<th>Total price</th>
+						<td th:text="${totalprice}"></td>
 					</tr>
 				</tbody>
 			</table>

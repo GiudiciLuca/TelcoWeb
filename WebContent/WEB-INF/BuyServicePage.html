@@ -4,18 +4,15 @@
 <meta charset="ISO-8859-1">
 <title>Customer Telco Buy Service</title>
 <link rel="stylesheet" type="text/css" media="all"
-	href="../CSS/style.css" th:href="@{/css/style.css}" />
+	href="../css/style.css" th:href="@{/css/style.css}" />
 </head>
 <body>
 
 	<h1>Telco Buy Service Page</h1>
-
-	<div align="right">
-		<a th:href="@{/Logout}">Logout</a>
-	</div>
-
+	
 	<div th:if="${session.user != null}" align="right">
 		<p th:text="${session.user.username}"></p>
+		<a th:href="@{/Logout}">Logout</a>
 	</div>
 
 	<p th:text="'Select remaining information for package: ' + ${package.name}"></p>
